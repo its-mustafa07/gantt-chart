@@ -19,6 +19,12 @@ export const convertToBarTasks = (
   projectProgressSelectedColor: string,
   projectBackgroundColor: string,
   projectBackgroundSelectedColor: string,
+  //modification starts
+  subProjectProgressColor: string,
+  subProjectProgressSelectedColor: string,
+  subProjectBackgroundColor: string,
+  subProjectBackgroundSelectedColor: string,
+  //modification ends
   milestoneBackgroundColor: string,
   milestoneBackgroundSelectedColor: string
 ) => {
@@ -41,17 +47,23 @@ export const convertToBarTasks = (
       projectProgressSelectedColor,
       projectBackgroundColor,
       projectBackgroundSelectedColor,
+      //modification starts
+      subProjectProgressColor,
+      subProjectProgressSelectedColor,
+      subProjectBackgroundColor,
+      subProjectBackgroundSelectedColor,
+      //modification ends
       milestoneBackgroundColor,
       milestoneBackgroundSelectedColor
     );
   });
 
   // set dependencies
-  barTasks = barTasks.map(task => {
+  barTasks = barTasks.map((task) => {
     const dependencies = task.dependencies || [];
     for (let j = 0; j < dependencies.length; j++) {
       const dependence = barTasks.findIndex(
-        value => value.id === dependencies[j]
+        (value) => value.id === dependencies[j]
       );
       if (dependence !== -1) barTasks[dependence].barChildren.push(task);
     }
@@ -79,6 +91,12 @@ const convertToBarTask = (
   projectProgressSelectedColor: string,
   projectBackgroundColor: string,
   projectBackgroundSelectedColor: string,
+  //modification starts
+  subProjectProgressColor: string,
+  subProjectProgressSelectedColor: string,
+  subProjectBackgroundColor: string,
+  subProjectBackgroundSelectedColor: string,
+  //modification ends
   milestoneBackgroundColor: string,
   milestoneBackgroundSelectedColor: string
 ): BarTask => {
@@ -115,6 +133,25 @@ const convertToBarTask = (
         projectBackgroundSelectedColor
       );
       break;
+    //modification starts
+    case "subproject":
+      barTask = convertToBar(
+        task,
+        index,
+        dates,
+        columnWidth,
+        rowHeight,
+        taskHeight,
+        barCornerRadius,
+        handleWidth,
+        rtl,
+        subProjectProgressColor,
+        subProjectProgressSelectedColor,
+        subProjectBackgroundColor,
+        subProjectBackgroundSelectedColor
+      );
+      break;
+    //modification ends
     default:
       barTask = convertToBar(
         task,
@@ -136,6 +173,72 @@ const convertToBarTask = (
   return barTask;
 };
 
+// const convertToBar = (
+//   task: Task,
+//   index: number,
+//   dates: Date[],
+//   columnWidth: number,
+//   rowHeight: number,
+//   taskHeight: number,
+//   barCornerRadius: number,
+//   handleWidth: number,
+//   rtl: boolean,
+//   barProgressColor: string,
+//   barProgressSelectedColor: string,
+//   barBackgroundColor: string,
+//   barBackgroundSelectedColor: string
+// ): BarTask => {
+//   let x1: number;
+//   let x2: number;
+//   if (rtl) {
+//     x2 = taskXCoordinateRTL(task.start, dates, columnWidth);
+//     x1 = taskXCoordinateRTL(task.end, dates, columnWidth);
+//   } else {
+//     x1 = taskXCoordinate(task.start, dates, columnWidth);
+//     x2 = taskXCoordinate(task.end, dates, columnWidth);
+//   }
+//   let typeInternal: TaskTypeInternal = task.type;
+//   if (typeInternal === "task" && x2 - x1 < handleWidth * 2) {
+//     typeInternal = "smalltask";
+//     x2 = x1 + handleWidth * 2;
+//   }
+
+//   const [progressWidth, progressX] = progressWithByParams(
+//     x1,
+//     x2,
+//     task.progress,
+//     rtl
+//   );
+//   const y = taskYCoordinate(index, rowHeight, taskHeight);
+//   const hideChildren = task.type === "project" ? task.hideChildren : undefined;
+
+//   const styles = {
+//     backgroundColor: barBackgroundColor,
+//     backgroundSelectedColor: barBackgroundSelectedColor,
+//     progressColor: barProgressColor,
+//     progressSelectedColor: barProgressSelectedColor,
+//     ...task.styles,
+//   };
+//   return {
+//     ...task,
+//     typeInternal,
+//     x1,
+//     x2,
+//     y,
+//     index,
+//     progressX,
+//     progressWidth,
+//     barCornerRadius,
+//     handleWidth,
+//     hideChildren,
+//     height: taskHeight,
+//     barChildren: [],
+//     styles,
+//   };
+// };
+
+// modification
+
 const convertToBar = (
   task: Task,
   index: number,
@@ -153,6 +256,8 @@ const convertToBar = (
 ): BarTask => {
   let x1: number;
   let x2: number;
+
+  // Calculate X coordinates for RTL or LTR layout
   if (rtl) {
     x2 = taskXCoordinateRTL(task.start, dates, columnWidth);
     x1 = taskXCoordinateRTL(task.end, dates, columnWidth);
@@ -160,21 +265,32 @@ const convertToBar = (
     x1 = taskXCoordinate(task.start, dates, columnWidth);
     x2 = taskXCoordinate(task.end, dates, columnWidth);
   }
+
+  // Determine task type and adjust for small tasks
   let typeInternal: TaskTypeInternal = task.type;
   if (typeInternal === "task" && x2 - x1 < handleWidth * 2) {
     typeInternal = "smalltask";
     x2 = x1 + handleWidth * 2;
   }
 
+  // Get progress width and position
   const [progressWidth, progressX] = progressWithByParams(
     x1,
     x2,
     task.progress,
     rtl
   );
-  const y = taskYCoordinate(index, rowHeight, taskHeight);
-  const hideChildren = task.type === "project" ? task.hideChildren : undefined;
 
+  // Calculate Y coordinate for task position
+  const y = taskYCoordinate(index, rowHeight, taskHeight);
+
+  // Handle sub-projects and determine if children should be hidden
+  const hideChildren =
+    task.type === "project" || task.type === "subproject"
+      ? task.hideChildren
+      : undefined;
+
+  // Collect the styles for the bar representation
   const styles = {
     backgroundColor: barBackgroundColor,
     backgroundSelectedColor: barBackgroundSelectedColor,
@@ -182,6 +298,8 @@ const convertToBar = (
     progressSelectedColor: barProgressSelectedColor,
     ...task.styles,
   };
+
+  // Return the bar task representation with additional properties
   return {
     ...task,
     typeInternal,
@@ -195,7 +313,7 @@ const convertToBar = (
     handleWidth,
     hideChildren,
     height: taskHeight,
-    barChildren: [],
+    barChildren: [], // Can be populated with actual child tasks or sub-projects
     styles,
   };
 };
@@ -247,7 +365,7 @@ const convertToMilestone = (
 };
 
 const taskXCoordinate = (xDate: Date, dates: Date[], columnWidth: number) => {
-  const index = dates.findIndex(d => d.getTime() >= xDate.getTime()) - 1;
+  const index = dates.findIndex((d) => d.getTime() >= xDate.getTime()) - 1;
 
   const remainderMillis = xDate.getTime() - dates[index].getTime();
   const percentOfInterval =

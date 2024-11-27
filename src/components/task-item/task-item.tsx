@@ -23,7 +23,7 @@ export type TaskItemProps = {
   ) => any;
 };
 
-export const TaskItem: React.FC<TaskItemProps> = props => {
+export const TaskItem: React.FC<TaskItemProps> = (props) => {
   const {
     task,
     arrowIndent,
@@ -47,6 +47,14 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
       case "project":
         setTaskItem(<Project {...props} />);
         break;
+
+      //modification
+      case "subproject":
+        setTaskItem(<Project {...props} />);
+        break;
+
+      //^modification
+
       case "smalltask":
         setTaskItem(<BarSmall {...props} />);
         break;
@@ -82,7 +90,7 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
 
   return (
     <g
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         switch (e.key) {
           case "Delete": {
             if (isDelete) onEventStart("delete", task, e);
@@ -91,16 +99,16 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
         }
         e.stopPropagation();
       }}
-      onMouseEnter={e => {
+      onMouseEnter={(e) => {
         onEventStart("mouseenter", task, e);
       }}
-      onMouseLeave={e => {
+      onMouseLeave={(e) => {
         onEventStart("mouseleave", task, e);
       }}
-      onDoubleClick={e => {
+      onDoubleClick={(e) => {
         onEventStart("dblclick", task, e);
       }}
-      onClick={e => {
+      onClick={(e) => {
         onEventStart("click", task, e);
       }}
       onFocus={() => {

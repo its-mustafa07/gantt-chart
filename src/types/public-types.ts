@@ -10,7 +10,35 @@ export enum ViewMode {
   Year = "Year",
 }
 
-export type TaskType = "task" | "milestone" | "project";
+// export type TaskType = "task" | "milestone" | "project";
+
+//modification
+export type TaskType = "task" | "milestone" | "project" | "subproject";
+
+// export interface Task {
+//   id: string;
+//   type: TaskType;
+//   name: string;
+//   start: Date;
+//   end: Date;
+//   /**
+//    * From 0 to 100
+//    */
+//   progress: number;
+//   styles?: {
+//     backgroundColor?: string;
+//     backgroundSelectedColor?: string;
+//     progressColor?: string;
+//     progressSelectedColor?: string;
+//   };
+//   isDisabled?: boolean;
+//   project?: string;
+//   dependencies?: string[];
+//   hideChildren?: boolean;
+//   displayOrder?: number;
+// }
+
+// modification
 
 export interface Task {
   id: string;
@@ -29,10 +57,18 @@ export interface Task {
     progressSelectedColor?: string;
   };
   isDisabled?: boolean;
-  project?: string;
-  dependencies?: string[];
-  hideChildren?: boolean;
+  project?: string; // Parent project or subproject ID
+  dependencies?: string[]; // Other task dependencies
+  hideChildren?: boolean; // Indicates if children should be hidden
   displayOrder?: number;
+}
+
+export interface Subproject extends Task {
+  tasks?: Task[]; // Tasks belonging to this subproject
+}
+
+export interface Project extends Task {
+  subprojects?: Subproject[]; // Subprojects belonging to this project
 }
 
 export interface EventOption {
@@ -110,6 +146,13 @@ export interface StylingOption {
   projectProgressSelectedColor?: string;
   projectBackgroundColor?: string;
   projectBackgroundSelectedColor?: string;
+  //modification
+  subProjectProgressColor?: string;
+  subProjectProgressSelectedColor?: string;
+  subProjectBackgroundColor?: string;
+  subProjectBackgroundSelectedColor?: string;
+  //modification end
+
   milestoneBackgroundColor?: string;
   milestoneBackgroundSelectedColor?: string;
   arrowColor?: string;

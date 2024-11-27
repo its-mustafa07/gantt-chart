@@ -44,6 +44,12 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   projectProgressSelectedColor = "#59a985",
   projectBackgroundColor = "#fac465",
   projectBackgroundSelectedColor = "#f7bb53",
+  //modification start
+  subProjectBackgroundColor = "purple",
+  subProjectProgressSelectedColor = "orange",
+  subProjectBackgroundSelectedColor = "yellow",
+  subProjectProgressColor = "red",
+  // modification end
   milestoneBackgroundColor = "#f1c453",
   milestoneBackgroundSelectedColor = "#f29e4c",
   rtl = false,
@@ -139,6 +145,10 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         projectProgressSelectedColor,
         projectBackgroundColor,
         projectBackgroundSelectedColor,
+        subProjectProgressColor,
+        subProjectProgressSelectedColor,
+        subProjectBackgroundColor,
+        subProjectBackgroundSelectedColor,
         milestoneBackgroundColor,
         milestoneBackgroundSelectedColor
       )
@@ -160,6 +170,10 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     projectProgressSelectedColor,
     projectBackgroundColor,
     projectBackgroundSelectedColor,
+    subProjectProgressColor,
+    subProjectProgressSelectedColor,
+    subProjectBackgroundColor,
+    subProjectBackgroundSelectedColor,
     milestoneBackgroundColor,
     milestoneBackgroundSelectedColor,
     rtl,

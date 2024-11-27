@@ -94,6 +94,8 @@ const App = () => {
         onExpanderClick={handleExpanderClick}
         listCellWidth={isChecked ? "155px" : ""}
         columnWidth={columnWidth}
+        barCornerRadius={2}
+
         //new ones
         // barProgressColor="#0000FF"
         // barProgressSelectedColor="#00ff00"
@@ -104,7 +106,7 @@ const App = () => {
         // arrowColor="purple"
         // arrowIndent={40}
       />
-      <h3>Gantt With Limited Height</h3>
+      {/* <h3>Gantt With Limited Height</h3>
       <Gantt
         tasks={tasks}
         viewMode={view}
@@ -118,7 +120,7 @@ const App = () => {
         listCellWidth={isChecked ? "155px" : ""}
         ganttHeight={300}
         columnWidth={columnWidth}
-      />
+      /> */}
     </div>
   );
 };

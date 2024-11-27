@@ -9,7 +9,7 @@ const toLocaleDateStringFactory =
     const key = date.toString();
     let lds = localeDateStringCache[key];
     if (!lds) {
-      lds = date.toLocaleDateString(locale, dateTimeOptions);
+      lds = date.toLocaleTimeString(locale, dateTimeOptions);
       localeDateStringCache[key] = lds;
     }
     return lds;
@@ -84,9 +84,31 @@ export const TaskListTableDefault: React.FC<{
                   }
                   onClick={() => onExpanderClick(t)}
                 >
+                  {t.type === "subproject" ? (
+                    <span
+                      dangerouslySetInnerHTML={{ __html: "&nbsp;&nbsp;" }}
+                    />
+                  ) : t.type === "task" ? (
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: "&nbsp;&nbsp;&nbsp;&nbsp;",
+                      }}
+                    />
+                  ) : (
+                    ""
+                  )}
                   {expanderSymbol}
                 </div>
-                <div>{t.name}</div>
+                <div
+                  style={{
+                    fontWeight:
+                      t.type === "project" || t.type === "subproject"
+                        ? "bolder"
+                        : "",
+                  }}
+                >
+                  {t.name}
+                </div>
               </div>
             </div>
             <div

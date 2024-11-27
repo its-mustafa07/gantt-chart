@@ -1,6 +1,8 @@
 // import { Task } from "../../dist/types/public-types";
-import { Task } from "./types/public-types";
+import { flattenTasks, removeHiddenTasks } from "./helpers/other-helper";
+import { Project, Task } from "./types/public-types";
 
+// Data before hierarchy
 // ORIGINAL LIBERARY DATA
 
 // export function initTasks() {
@@ -101,106 +103,109 @@ import { Task } from "./types/public-types";
 // }
 
 // DUMMY DATA WITHOUT HIERARCHY
-export function initTasks() {
-  const currentDate = new Date();
-  const tasks: Task[] = [
-    // Project 1
-    {
-      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
-      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 15),
-      name: "Project Alpha",
-      id: "ProjectAlpha",
-      progress: 40,
-      type: "project",
-      hideChildren: false,
-      displayOrder: 1,
-    },
-    {
-      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
-      end: new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        3,
-        12,
-        0
-      ),
-      name: "Requirement Gathering",
-      id: "TaskA1",
-      progress: 30,
-      type: "task",
-      project: "ProjectAlpha",
-      displayOrder: 2,
-    },
-    {
-      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 4),
-      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),
-      name: "Development Phase 1",
-      id: "TaskA2",
-      progress: 50,
-      dependencies: ["TaskA1"],
-      type: "task",
-      project: "ProjectAlpha",
-      displayOrder: 3,
-    },
-    {
-      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 6),
-      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 10),
-      name: "Development Phase 1",
-      id: "TaskA3",
-      progress: 50,
-      dependencies: ["TaskA1", "TaskA2"],
-      type: "task",
-      project: "ProjectAlpha",
-      displayOrder: 4,
-    },
 
-    // Project 2
-    {
-      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 5),
-      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 20),
-      name: "Project Beta",
-      id: "ProjectBeta",
-      progress: 20,
-      type: "project",
-      hideChildren: false,
-      displayOrder: 4,
-    },
-    {
-      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 5),
-      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 6),
-      name: "Initial Planning",
-      id: "TaskB1",
-      progress: 20,
-      type: "task",
-      project: "ProjectBeta",
-      displayOrder: 5,
-    },
-    {
-      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 7),
-      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 12),
-      name: "Execution Phase",
-      id: "TaskB2",
-      progress: 10,
-      dependencies: ["TaskB1"],
-      type: "task",
-      project: "ProjectBeta",
-      displayOrder: 6,
-    },
-    {
-      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 15),
-      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 15),
-      name: "Final Review",
-      id: "TaskB3",
-      progress: 0,
-      type: "milestone",
-      dependencies: ["TaskB2"],
-      project: "ProjectBeta",
-      displayOrder: 7,
-    },
-  ];
+// export function initTasks() {
+//   const currentDate = new Date();
+//   const tasks: Task[] = [
+//     // Project 1
+//     {
+//       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+//       end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 15),
+//       name: "Project Alpha",
+//       id: "ProjectAlpha",
+//       progress: 10,
+//       type: "project",
+//       hideChildren: false,
+//       displayOrder: 1,
+//       isDisabled: true,
+//     },
+//     {
+//       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+//       end: new Date(
+//         currentDate.getFullYear(),
+//         currentDate.getMonth(),
+//         3,
+//         12,
+//         0
+//       ),
+//       name: "Requirement Gathering",
+//       id: "TaskA1",
+//       progress: 30,
+//       type: "subproject",
+//       hideChildren: false,
+//       // project: "ProjectAlpha",
+//       displayOrder: 2,
+//     },
+//     {
+//       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 4),
+//       end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),
+//       name: "Development Phase 1",
+//       id: "TaskA2",
+//       progress: 50,
+//       // dependencies: ["TaskA1"],
+//       type: "task",
+//       project: "ProjectAlpha",
+//       displayOrder: 3,
+//     },
+//     {
+//       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 6),
+//       end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 10),
+//       name: "Development Phase 2",
+//       id: "TaskA3",
+//       progress: 50,
+//       dependencies: ["TaskA2"],
+//       type: "task",
+//       project: "ProjectAlpha",
+//       displayOrder: 4,
+//     },
 
-  return tasks;
-}
+//     // Project 2
+//     {
+//       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 5),
+//       end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 20),
+//       name: "Project Beta",
+//       id: "ProjectBeta",
+//       progress: 20,
+//       type: "project",
+//       hideChildren: false,
+//       displayOrder: 4,
+//     },
+//     {
+//       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 5),
+//       end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 6),
+//       name: "Initial Planning",
+//       id: "TaskB1",
+//       progress: 20,
+//       type: "task",
+//       project: "ProjectBeta",
+//       displayOrder: 5,
+//     },
+//     {
+//       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 7),
+//       end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 12),
+//       name: "Execution Phase",
+//       id: "TaskB2",
+//       progress: 10,
+//       dependencies: ["TaskB1"],
+//       type: "task",
+//       project: "ProjectBeta",
+//       displayOrder: 6,
+//     },
+//     {
+//       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 15),
+//       end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 15),
+//       name: "Final Review",
+//       id: "TaskB3",
+//       progress: 0,
+//       type: "milestone",
+//       dependencies: ["TaskB2"],
+//       project: "ProjectBeta",
+//       displayOrder: 7,
+//     },
+//   ];
+
+//   return tasks;
+// }
 
 // DUMMY DATA WITH HEIRARCHY
 // export function initTasks() {
@@ -309,6 +314,177 @@ export function initTasks() {
 
 //   return tasks;
 // }
+
+//data for hierarchy test
+
+export function initTasks() {
+  const currentDate = new Date();
+  const projects: Project[] = [
+    {
+      id: "MainConstructionProject",
+      name: "Main Construction Project",
+      type: "project",
+      progress: 15,
+      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 30),
+      hideChildren: false,
+      displayOrder: 1,
+      subprojects: [
+        {
+          id: "HousePlanA",
+          name: "House Plan A",
+          type: "subproject",
+          progress: 40,
+          project: "MainConstructionProject",
+          start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+          end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 15),
+          hideChildren: false,
+          displayOrder: 2,
+          tasks: [
+            {
+              id: "FoundationWorkA",
+              name: "Foundation Work",
+              type: "task",
+              progress: 50,
+              project: "HousePlanA",
+              start: new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                1
+              ),
+              end: new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                5
+              ),
+              displayOrder: 3,
+            },
+            {
+              id: "FramingA",
+              name: "Framing",
+              type: "task",
+              progress: 30,
+              project: "HousePlanA",
+              start: new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                6
+              ),
+              end: new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                10
+              ),
+              displayOrder: 4,
+            },
+            {
+              id: "InspectionA",
+              name: "Inspection Milestone",
+              type: "milestone",
+              progress: 0,
+              project: "HousePlanA",
+              dependencies: ["FoundationWorkA", "FramingA"],
+              start: new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                12
+              ),
+              end: new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                12
+              ),
+              isDisabled: false,
+              displayOrder: 5,
+            },
+          ],
+        },
+        {
+          id: "HousePlanB",
+          name: "House Plan B",
+          type: "subproject",
+          progress: 20,
+          project: "MainConstructionProject",
+          start: new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            16
+          ),
+          end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 30),
+          hideChildren: false,
+          displayOrder: 6,
+          tasks: [
+            {
+              id: "FoundationWorkB",
+              name: "Foundation Work",
+              type: "task",
+              progress: 10,
+              project: "HousePlanB",
+              start: new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                16
+              ),
+              end: new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                20
+              ),
+              displayOrder: 7,
+            },
+            {
+              id: "FramingB",
+              name: "Framing",
+              type: "task",
+              progress: 0,
+              project: "HousePlanB",
+              start: new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                21
+              ),
+              end: new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                25
+              ),
+              displayOrder: 8,
+            },
+            {
+              id: "InspectionB",
+              name: "Inspection Milestone",
+              type: "milestone",
+              progress: 0,
+              project: "HousePlanB",
+              dependencies: ["FoundationWorkB", "FramingB"],
+              start: new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                28
+              ),
+              end: new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                28
+              ),
+              isDisabled: false,
+              displayOrder: 9,
+            },
+          ],
+        },
+      ],
+    },
+  ];
+
+  // Flatten tasks from nested structure
+  const allTasks = flattenTasks(projects);
+
+  // Filter out hidden tasks
+  const visibleTasks = removeHiddenTasks(allTasks);
+
+  // Return the final tasks if needed
+  return visibleTasks;
+}
 
 export function getStartEndDateForProject(tasks: Task[], projectId: string) {
   const projectTasks = tasks.filter((t) => t.project === projectId);
